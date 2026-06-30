@@ -1,169 +1,189 @@
-# JARVIS — Personal AI Assistant
+<div align="center">
 
-> *"Not all those who wander are lost. But JARVIS always knows where you are."*
+# 🧠 JARVIS
 
-A personal AI second brain built with Python and Django. JARVIS is designed to grow phase by phase — from a chat UI today, to a fully autonomous desktop assistant with voice, memory, and internet access.
+### A self-hosted personal AI assistant, built from scratch.
 
----
+*Inspired by Iron Man. Powered by Python, Django, and a local AI brain.*
 
-## Vision
+[![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-6.0-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Ollama](https://img.shields.io/badge/AI-Ollama%20(Local)-black?logo=ollama&logoColor=white)](https://ollama.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-yellow)]()
 
-JARVIS is not just a chatbot. The goal is a personal AI operating system:
-
-```
-You: Open my editor.
-JARVIS: Opening VS Code, Bro.
-
-You: Remember my favorite editor is VS Code.
-JARVIS: Understood Bro. I'll remember that.
-
-You: What is my favorite editor?
-JARVIS: Your favorite editor is VS Code, Bro.
-```
+</div>
 
 ---
 
-## Tech Stack
+## ✨ What is JARVIS?
 
-| Layer | Technology |
-|---|---|
-| Backend | Python 3.13, Django 6.x |
-| Database | SQLite |
-| Frontend | HTML, CSS, JavaScript |
-| AI Engine | Ollama (Phase 3) |
-| Voice Input | Whisper STT (Phase 7) |
-| Voice Output | Edge-TTS (Phase 7) |
+JARVIS is a personal AI assistant that runs **entirely on your own machine** — no cloud subscriptions, no sending your conversations to a third party. It's built around a custom Django backend, a hand-designed dark-themed chat interface (codename: **Odysseus Navigator**), and a local large language model powered by [Ollama](https://ollama.com/).
+
+This project started as a simple question: *what would it take to actually build a JARVIS?* A few weeks of late-night debugging, Git mishaps, and architecture rewrites later — it's alive, it talks back, and it's fully open source.
 
 ---
 
-## Project Structure
+## 🚀 Features (so far)
+
+- 🖥️ **Custom chat interface** — dark theme, smooth animations, built from scratch (no UI templates)
+- 🧠 **Local AI brain** — powered by Ollama, fully private, runs offline
+- 🗣️ **Voice output (TTS)** — JARVIS speaks its responses back to you
+- 🛡️ **Safety layer** — input filtering before any request reaches the AI
+- 🗂️ **Clean modular architecture** — AI logic, Django app, and frontend are fully decoupled
+- 💾 **Conversation memory** *(in progress)* — SQLite-backed chat history
+
+---
+
+## 🏗️ Architecture
 
 ```
-jarvis/
-├── assistant/          # Django app — views, models, routes
-│   ├── migrations/
-│   ├── models.py       # Conversation & Memory models
-│   ├── views.py        # Chat view + API endpoints
-│   └── urls.py
-│
-├── brain/              # JARVIS intelligence modules
-│   ├── __init__.py
-│   ├── core.py         # Central router — dispatches all requests
-│   ├── ai.py           # Ollama LLM integration (Phase 3)
-│   ├── safety.py       # Input/output safety filtering
-│   ├── search.py       # Web search + file search (Phase 6)
-│   ├── voice.py        # Whisper STT + Edge-TTS (Phase 7)
-│   └── desktop.py      # Desktop automation (Phase 5)
-│
-├── core/               # Django project config
+JARVIS/
+├── core/                  # Django project configuration
 │   ├── settings.py
-│   └── urls.py
+│   ├── urls.py
+│   └── wsgi.py / asgi.py
 │
-|
-|
-├── jarvis_frountend
-|   ├── static/
-│   |   ├── css/style.css   # Odysseus dark theme
-│   |   └── js/chat.js      # Chat UI logic
-│   |
-|   ├── templates/
-│       └── chat.html       # Main chat interface
+├── assistant/             # Django app — views, API routes, models
+│   ├── views.py
+│   ├── urls.py
+│   └── migrations/
+│
+├── brain/                 # AI logic layer (framework-agnostic)
+│   ├── core.py            # Central message router
+│   ├── ai.py               # Ollama integration
+│   ├── voice.py            # Text-to-speech
+│   ├── desktop.py          # Desktop automation commands
+│   ├── safety.py           # Input safety checks
+│   └── search.py           # Web search (planned)
+│
+├── frontend/               # UI layer
+│   ├── templates/
+│   └── static/
 │
 ├── manage.py
-├── README.md
 └── requirements.txt
 ```
 
+**Why this structure?** The `brain/` package contains zero Django imports — it's pure Python, meaning the AI logic can be tested, reused, or swapped out independently of the web framework wrapped around it.
+
 ---
 
-## Setup
+## 🛣️ Roadmap
+
+JARVIS is being built in 7 phases:
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| 1 | ✅ Done | Django backend + custom chat UI (Odysseus Navigator) |
+| 2 | 🔄 In Progress | SQLite conversation memory |
+| 3 | ✅ Done | Local AI integration via Ollama |
+| 4 | ⏳ Planned | Memory-aware context injection |
+| 5 | ⏳ Planned | Desktop automation commands |
+| 6 | ⏳ Planned | Web search integration |
+| 7 | ⏳ Planned | Voice input (Whisper) + voice wake word |
+
+---
+
+## ⚙️ Installation
+
+### Prerequisites
+
+- Python 3.11+
+- [Ollama](https://ollama.com/download) installed and running
+- Git
+
+### 1. Clone the repository
 
 ```bash
-# 1. Clone and navigate
-cd jarvis
+git clone https://github.com/Mano11x/JARVIS.git
+cd JARVIS
+```
 
-# 2. Activate virtual environment (Windows)
-venv\Scripts\Activate.ps1
+### 2. Create and activate a virtual environment
 
-# 3. Install dependencies
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-# 4. Run migrations
+### 4. Pull a local AI model via Ollama
+
+```bash
+ollama pull llama3.2:1b
+```
+
+*(You can substitute any model you prefer — e.g. `mistral` for higher quality at the cost of speed. Update the model name in `brain/core.py` if you switch.)*
+
+### 5. Run database migrations
+
+```bash
 python manage.py migrate
+```
 
-# 5. Start server
+### 6. Start the server
+
+```bash
 python manage.py runserver
 ```
 
-Visit `http://127.0.0.1:8000`
+Open **http://127.0.0.1:8000/assistant/** in your browser — JARVIS should greet you.
 
 ---
 
-## Roadmap
+## 🔑 Environment Variables
 
-### Phase 1 — Chat UI (done)
-- [x] Django project setup
-- [x] Routing and template engine configured
-- [x] Dark Odysseus-themed chat interface
-- [x] Bronze star idle/thinking animation
-- [x] Responsive layout
+Create a `.env` file in the project root if you plan to extend JARVIS with cloud AI fallback or other API integrations:
 
-### Phase 2 — Memory & Storage (next)
-- [ ] `Conversation` model — persist chat history in SQLite
-- [ ] `Memory` model — store key facts about the user
-- [ ] Chat history visible in sidebar
-- [ ] JARVIS reads memory before each response
+```env
+OPENAI_API_KEY=your_key_here       # optional, for cloud fallback
+OPENAI_MODEL=gpt-3.5-turbo          # optional
+```
 
-### Phase 3 — Local AI (Ollama)
-- [ ] Install and run Ollama locally
-- [ ] `brain/ai.py` — send prompts, receive responses
-- [ ] Stream responses token by token
-- [ ] Choose model (llama3, mistral, etc.)
-
-### Phase 4 — Long-term Memory
-- [ ] JARVIS extracts facts from conversations
-- [ ] Stores preferences, names, habits
-- [ ] Memory retrieval injected into context
-
-### Phase 5 — Desktop Automation
-- [ ] Open applications by name
-- [ ] Open folders and files
-- [ ] Search local files
-- [ ] `brain/desktop.py`
-
-### Phase 6 — Internet Access
-- [ ] Web search via DuckDuckGo or SerpAPI
-- [ ] Read and summarise web pages
-- [ ] Draft and send emails
-- [ ] `brain/search.py`
-
-### Phase 7 — Voice
-- [ ] Wake word detection
-- [ ] Whisper for speech-to-text
-- [ ] Edge-TTS for text-to-speech
-- [ ] Fully hands-free operation
-- [ ] `brain/voice.py`
+> ⚠️ Never commit your `.env` file — it's already excluded via `.gitignore`.
 
 ---
 
-## Design Language
+## 🧰 Tech Stack
 
-The UI follows an **Odysseus / Navigator** aesthetic:
-
-- **Void background** — near-black `#0A0D14`
-- **Bronze accents** — `#C99A4B` (the guide star)
-- **Cinzel serif** — for the JARVIS wordmark only
-- **Manrope sans** — for all chat content
-- **JetBrains Mono** — for status and metadata
-
-The bronze star pulses slowly at idle and quickens when JARVIS is thinking.
-
----
-
-## Contributing
-
-This is a personal project. If you fork it, make it yours.
+| Layer | Technology |
+|-------|-----------|
+| Backend | Django 6.0 |
+| AI Engine | Ollama (local LLM inference) |
+| Text-to-Speech | pyttsx3 |
+| Database | SQLite |
+| Frontend | HTML / CSS / vanilla JS |
+| Language | Python 3.13 |
 
 ---
 
-*Built by Mano — Chennai, India*
+## 🤝 Contributing
+
+This is a personal learning project, but feedback, issues, and PRs are welcome. If you spot a bug or have an idea, feel free to open an issue.
+
+---
+
+## 📬 Contact
+
+**Mano** — [GitHub @Mano11x](https://github.com/Mano11x) · manomaghi6@gmail.com
+
+---
+
+<div align="center">
+
+*Built over 2-4 weeks of nights and weekends, one debugging session at a time.*
+
+</div>
