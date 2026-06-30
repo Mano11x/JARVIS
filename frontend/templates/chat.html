@@ -1,0 +1,609 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JARVIS Desktop Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-secondary": "#003545",
+                "tertiary": "#c0e5f3",
+                "on-tertiary-fixed": "#001f28",
+                "on-primary-fixed-variant": "#004e5f",
+                "on-error": "#690005",
+                "outline": "#859398",
+                "surface-container-lowest": "#0e0e0e",
+                "secondary": "#95cfe9",
+                "on-tertiary": "#0d3540",
+                "on-error-container": "#ffdad6",
+                "primary": "#a8e8ff",
+                "primary-fixed-dim": "#3cd7ff",
+                "on-background": "#e2e2e2",
+                "on-primary-fixed": "#001f27",
+                "inverse-primary": "#00677e",
+                "secondary-container": "#035066",
+                "error-container": "#93000a",
+                "surface": "#131313",
+                "surface-container-low": "#1b1b1b",
+                "surface-container-highest": "#353535",
+                "on-tertiary-container": "#315561",
+                "on-secondary-container": "#87c0da",
+                "tertiary-fixed-dim": "#a7ccda",
+                "surface-bright": "#393939",
+                "on-primary-container": "#00586b",
+                "on-secondary-fixed": "#001f29",
+                "surface-dim": "#131313",
+                "primary-fixed": "#b4ebff",
+                "on-secondary-fixed-variant": "#004d63",
+                "on-tertiary-fixed-variant": "#274c57",
+                "surface-container": "#1f1f1f",
+                "outline-variant": "#3c494e",
+                "inverse-on-surface": "#303030",
+                "primary-container": "#00d4ff",
+                "on-surface-variant": "#bbc9cf",
+                "surface-tint": "#3cd7ff",
+                "tertiary-container": "#a4c9d7",
+                "inverse-surface": "#e2e2e2",
+                "surface-variant": "#353535",
+                "background": "#0e0e0e",
+                "secondary-fixed-dim": "#95cfe9",
+                "on-surface": "#e2e2e2",
+                "secondary-fixed": "#bce9ff",
+                "surface-container-high": "#2a2a2a",
+                "tertiary-fixed": "#c3e8f7",
+                "on-primary": "#003642"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "margin-desktop": "40px",
+                "margin-mobile": "16px",
+                "gutter": "16px",
+                "container-max": "1440px",
+                "unit": "4px"
+              },
+              "fontFamily": {
+                "headline-sm": ["JetBrains Mono"],
+                "body-sm": ["JetBrains Mono"],
+                "headline-lg": ["JetBrains Mono"],
+                "headline-md": ["JetBrains Mono"],
+                "code-data": ["JetBrains Mono"],
+                "body-lg": ["JetBrains Mono"],
+                "label-caps": ["Space Grotesk"]
+              },
+              "fontSize": {
+                "headline-sm": ["20px", {"lineHeight": "1.4", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                "body-sm": ["14px", {"lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "code-data": ["10px", {"lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "400"}],
+                "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.2em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0e;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #001f29 0%, #0e0e0e 80%),
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
+            background-size: 100% 100%, 100% 3px;
+            overflow: hidden;
+            height: 100vh;
+            color: #a8e8ff;
+            cursor: crosshair;
+        }
+
+        .digital-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: scan 8s linear infinite;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .hud-border {
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            background: rgba(0, 53, 69, 0.05);
+            backdrop-filter: blur(4px);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .voice-bar {
+            width: 3px;
+            background: #00d4ff;
+            margin: 0 1px;
+            border-radius: 1px;
+            box-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+            transition: height 0.1s ease;
+        }
+
+        .rotate-slow { animation: spin 20s linear infinite; }
+        .rotate-reverse { animation: spin-rev 25s linear infinite; }
+        
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spin-rev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+        .widget-header {
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 4px 8px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(0, 212, 255, 0.7);
+        }
+
+        .command-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .pulse-mic {
+            animation: mic-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes mic-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 15px 5px rgba(0, 212, 255, 0.15); }
+        }
+    </style>
+</head>
+<body class="font-body-sm selection:bg-primary/30">
+<div class="digital-noise"></div>
+<div class="scan-line"></div>
+<!-- Header / Top Bar -->
+<header class="fixed top-0 left-0 w-full h-12 z-50 flex items-center px-6 border-b border-white/5 bg-background/40 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<div class="flex flex-col">
+<h1 class="text-headline-sm font-bold tracking-[0.3em] glow-text leading-none">JARVIS</h1>
+<span class="text-[8px] opacity-40 uppercase tracking-tighter">Strategic Intelligence System // MK-V.2</span>
+</div>
+</div>
+<div class="mx-auto flex gap-12">
+<div class="flex items-center gap-2 group cursor-pointer">
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
+<span class="text-code-data uppercase tracking-widest text-primary/80 group-hover:text-primary transition-colors">Operational Status: Nominal</span>
+</div>
+<div class="hidden xl:flex items-center gap-2">
+<span class="text-code-data opacity-40">UPLINK:</span>
+<span class="text-code-data text-primary">SECURE_TUNNEL_082</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right hidden sm:block">
+<div class="text-code-data font-bold" id="clock">12:00:00</div>
+<div class="text-[8px] opacity-40 tracking-widest">MALIBU_CA_USA</div>
+</div>
+<button id="settings-btn" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Sidebars -->
+<aside class="fixed left-6 top-20 bottom-32 w-64 z-20 flex flex-col gap-4">
+<!-- SYSTEM ANALYTICS -->
+<div class="hud-border p-4 h-[220px] flex-shrink-0">
+<div class="widget-header">SYSTEM ANALYTICS</div>
+<div class="flex flex-col gap-2">
+<div class="space-y-0.5">
+<div class="flex justify-between text-[10px] uppercase opacity-60"><span>CPU Load</span><span>42%</span></div>
+<div class="h-1 bg-white/5 overflow-hidden"><div class="h-full bg-primary w-[42%]"></div></div>
+</div>
+<div class="space-y-0.5">
+<div class="flex justify-between text-[10px] uppercase opacity-60"><span>Memory</span><span>12.4 GB</span></div>
+<div class="h-1 bg-white/5 overflow-hidden"><div class="h-full bg-primary w-[88%]"></div></div>
+</div>
+<div class="space-y-0.5">
+<div class="flex justify-between text-[10px] uppercase opacity-60"><span>Core Temp</span><span>38°C</span></div>
+<div class="h-1 bg-white/5 overflow-hidden"><div class="h-full bg-primary w-[38%]"></div></div>
+</div>
+<div class="mt-2 border-t border-white/5 pt-2">
+<div class="text-[8px] font-mono opacity-40 mb-1">THREAD_DUMP_0x00FF</div>
+<div class="text-[8px] font-mono opacity-60 space-y-0.5">
+<div class="flex justify-between"><span>&gt; Process: Kernel</span><span>0.002ms</span></div>
+<div class="flex justify-between"><span>&gt; Process: AI_Core</span><span>0.145ms</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- NEURAL TRANSCRIPT -->
+<div class="hud-border p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+<div class="widget-header">NEURAL TRANSCRIPT</div>
+<div id="transcript" class="flex-1 overflow-y-auto space-y-2 pr-1 text-[10px] font-mono" style="scrollbar-width: thin; scrollbar-color: rgba(0, 212, 255, 0.2) transparent;">
+  <!-- Dialogues will appear here -->
+</div>
+</div>
+</aside>
+<aside class="fixed right-6 top-20 bottom-32 w-72 z-20 flex flex-col gap-4">
+<!-- GLOBAL THREAT MAP -->
+<div class="hud-border p-4 flex-1 relative overflow-hidden">
+<div class="widget-header">GLOBAL THREAT MAP</div>
+<div class="w-full aspect-video bg-white/5 rounded border border-white/10 flex items-center justify-center opacity-40">
+<span class="material-symbols-outlined text-4xl">public</span>
+</div>
+<div class="mt-4 space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error animate-ping"></div>
+<span class="text-[10px] text-error">Anomalous Activity Detected: Sector 7</span>
+</div>
+<div class="flex items-center gap-2 opacity-60">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px]">Secure Node: Malibu HQ</span>
+</div>
+</div>
+<svg class="absolute bottom-0 right-0 w-24 h-24 opacity-20" viewbox="0 0 100 100">
+<circle cx="100" cy="100" fill="none" r="80" stroke="#00d4ff" stroke-dasharray="5 5" stroke-width="0.5"></circle>
+<circle cx="100" cy="100" fill="none" r="60" stroke="#00d4ff" stroke-width="1"></circle>
+</svg>
+</div>
+<!-- ACTIVE DATA LOGS -->
+<div class="hud-border p-4 h-64 overflow-hidden">
+<div class="widget-header">DATA LOGS</div>
+<div class="text-[9px] font-mono space-y-1.5 opacity-60" id="data-logs">
+<p>[14:20:01] Initializing neural handshake...</p>
+<p class="text-primary">[14:20:03] Auth: Verified MK-V-ALPHA</p>
+<p>[14:20:05] Loading localized terrain data...</p>
+<p>[14:20:08] Sensors online. All systems green.</p>
+<p>[14:20:12] Scanning external networks...</p>
+<p>[14:20:15] No immediate threats identified.</p>
+</div>
+</div>
+</aside>
+<!-- Main Central Area -->
+<main class="relative h-screen flex flex-col items-center justify-center pt-12 pb-32">
+<!-- Central 3D Core with SVG HUD Overlay -->
+<div class="relative w-[600px] h-[600px] flex items-center justify-center">
+<!-- SVG HUD Elements -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10" viewbox="0 0 400 400">
+<!-- Outer Scanning Arcs -->
+<circle cx="200" cy="200" fill="none" r="190" stroke="rgba(0, 212, 255, 0.1)" stroke-width="1"></circle>
+<path class="rotate-slow" d="M 200,10 A 190,190 0 0 1 390,200" fill="none" stroke="rgba(0, 212, 255, 0.4)" stroke-width="2" style="transform-origin: center;"></path>
+<path class="rotate-reverse" d="M 10,200 A 190,190 0 0 0 200,390" fill="none" stroke="rgba(0, 212, 255, 0.2)" stroke-dasharray="2, 10" stroke-width="4" style="transform-origin: center;"></path>
+<!-- Inner Data Rings -->
+<circle cx="200" cy="200" fill="none" r="160" stroke="rgba(0, 212, 255, 0.05)" stroke-dasharray="1, 4" stroke-width="20"></circle>
+<!-- Corner Brackets -->
+<path d="M 20,40 L 20,20 L 40,20" fill="none" stroke="#00d4ff" stroke-width="1.5"></path>
+<path d="M 360,20 L 380,20 L 380,40" fill="none" stroke="#00d4ff" stroke-width="1.5"></path>
+<path d="M 380,360 L 380,380 L 360,380" fill="none" stroke="#00d4ff" stroke-width="1.5"></path>
+<path d="M 40,380 L 20,380 L 20,360" fill="none" stroke="#00d4ff" stroke-width="1.5"></path>
+<!-- Scanning Microtext -->
+<text class="text-[4px] fill-primary opacity-50 uppercase font-mono" x="210" y="25">SCAN_PRECISION: HIGH</text>
+<text class="text-[4px] fill-primary opacity-50 uppercase font-mono" x="210" y="32">VECTOR_SYNC: 0.9992</text>
+</svg>
+<!-- 3D Core -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_5" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_5');
+  if (!container) return;
+
+  const width = container.clientWidth || window.innerWidth;
+  const height = container.clientHeight || window.innerHeight;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+  camera.position.z = 12;
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const cyan = new THREE.Color(0x00d4ff);
+  const particleCount = 4000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+
+  for (let i = 0; i < particleCount; i++) {
+    const r = 4 + Math.random() * 2;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = r * Math.cos(phi);
+    colors[i * 3] = cyan.r;
+    colors[i * 3 + 1] = cyan.g;
+    colors[i * 3 + 2] = cyan.b;
+    sizes[i] = Math.random() * 2;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  const material = new THREE.PointsMaterial({
+    size: 0.04,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true
+  });
+
+  const particleSystem = new THREE.Points(geometry, material);
+  scene.add(particleSystem);
+
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: cyan,
+    transparent: true,
+    opacity: 0.05,
+    blending: THREE.AdditiveBlending
+  });
+
+  const lineCount = 300;
+  const lineGeometry = new THREE.BufferGeometry();
+  const linePositions = new Float32Array(lineCount * 6);
+  lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+  const neuralLines = new THREE.LineSegments(lineGeometry, lineMaterial);
+  scene.add(neuralLines);
+
+  const ringGroup = new THREE.Group();
+  scene.add(ringGroup);
+
+  const createHUDElement = (radius, detail, speed, opacity, type = 'ring') => {
+    const geo = type === 'ring'
+      ? new THREE.TorusGeometry(radius, 0.015, 12, detail)
+      : new THREE.RingGeometry(radius, radius + 0.05, detail);
+    const mat = new THREE.MeshBasicMaterial({
+      color: cyan,
+      transparent: true,
+      opacity,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.rotationSpeed = speed;
+    ringGroup.add(mesh);
+    return mesh;
+  };
+
+  const ring1 = createHUDElement(6, 100, 0.005, 0.3);
+  const ring2 = createHUDElement(6.5, 6, 0.01, 0.2);
+  const ring3 = createHUDElement(5.5, 64, -0.008, 0.15);
+  ring3.rotation.x = Math.PI / 3;
+
+  const clock = new THREE.Clock();
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    const time = clock.getElapsedTime();
+
+    particleSystem.rotation.y += 0.1 * delta;
+    particleSystem.rotation.z += 0.05 * delta;
+    material.opacity = 0.4 + Math.sin(time * 1.5) * 0.2;
+
+    const pos = geometry.attributes.position.array;
+    const lPos = lineGeometry.attributes.position.array;
+    for (let i = 0; i < lineCount; i++) {
+      const idx1 = Math.floor(Math.random() * particleCount) * 3;
+      lPos[i * 6] = pos[idx1];
+      lPos[i * 6 + 1] = pos[idx1 + 1];
+      lPos[i * 6 + 2] = pos[idx1 + 2];
+      lPos[i * 6 + 3] = 0;
+      lPos[i * 6 + 4] = 0;
+      lPos[i * 6 + 5] = 0;
+    }
+    lineGeometry.attributes.position.needsUpdate = true;
+
+    ringGroup.children.forEach((ring, i) => {
+      ring.rotation.z += ring.rotationSpeed;
+      if (i % 2 === 0) ring.rotation.x += ring.rotationSpeed * 0.5;
+    });
+
+    renderer.render(scene, camera);
+  };
+
+  window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  animate();
+})();
+</script>
+</div>
+</div>
+<!-- Central Data Readout -->
+<div class="z-20 text-center pointer-events-none">
+<div class="text-[10px] tracking-[1em] uppercase opacity-40 mb-2">Central Processor</div>
+<div class="text-4xl font-bold tracking-tighter glow-text">98.4<span class="text-lg font-normal">%</span></div>
+<div class="text-[8px] uppercase tracking-widest opacity-60 mt-2">Sync Probability</div>
+</div>
+</div>
+<!-- Bottom Center UI: Command & Voice -->
+<div class="fixed bottom-0 left-0 w-full z-40 bg-background/60 backdrop-blur-xl border-t border-white/10 px-margin-desktop py-6 flex flex-col items-center gap-6">
+<div class="flex items-end justify-center h-8 gap-0.5" id="visualizer">
+</div>
+<div class="w-full max-w-4xl flex items-center gap-6">
+<div class="relative flex-shrink-0">
+<button id="mic-btn" class="w-16 h-16 rounded-full bg-background border-2 border-primary/40 flex items-center justify-center text-primary transition-all duration-300 hover:border-primary hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] pulse-mic group">
+<span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">mic</span>
+</button>
+<div class="absolute inset-0 rounded-full border border-primary/20 scale-125 animate-ping pointer-events-none"></div>
+</div>
+<div class="flex-1 relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 material-symbols-outlined">terminal</span>
+<input class="w-full h-14 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-primary font-mono text-sm tracking-widest uppercase placeholder:text-primary/20 command-input transition-all" placeholder="JARVIS, INITIALIZE DEFENSE PROTOCOL..." type="text" id="chat-input"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<span class="text-[10px] text-primary/40 uppercase">Press Enter to execute</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between w-full px-4 text-[10px] opacity-40 uppercase tracking-[0.2em]">
+<div>MOD-001 // MK-V // DIST: LOCALHOST</div>
+<div class="flex gap-6">
+<span class="cursor-pointer hover:text-primary transition-colors">[ F1 ] HELP</span>
+<span class="cursor-pointer hover:text-primary transition-colors">[ F2 ] LOGS</span>
+<span class="cursor-pointer hover:text-primary transition-colors">[ ESC ] EXIT</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            document.getElementById('clock').textContent = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Visualizer Simulation
+        const visualizer = document.getElementById('visualizer');
+        const barCount = 64;
+        const bars = [];
+
+        for (let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'voice-bar';
+            bar.style.height = '4px';
+            visualizer.appendChild(bar);
+            bars.push(bar);
+        }
+
+        function animateVisualizer() {
+            bars.forEach((bar, index) => {
+                const time = Date.now() / 800;
+                let noise = Math.sin(time * 3 + index * 0.2) * 15 + 15;
+                noise += Math.random() * 8;
+                const edgeMultiplier = 1 - Math.abs((index - barCount/2) / (barCount/2));
+                bar.style.height = `${Math.max(2, noise * edgeMultiplier)}px`;
+                bar.style.opacity = 0.2 + (noise / 50);
+            });
+            requestAnimationFrame(animateVisualizer);
+        }
+        animateVisualizer();
+
+        // Interaction Feedback for Mic
+        const micBtn = document.querySelector('.pulse-mic');
+        micBtn.addEventListener('mousedown', () => {
+            micBtn.style.boxShadow = '0 0 40px #00d4ff';
+            micBtn.style.transform = 'scale(0.95)';
+        });
+        micBtn.addEventListener('mouseup', () => {
+            micBtn.style.boxShadow = '';
+            micBtn.style.transform = '';
+        });
+
+        // Add dynamic log entries
+        const logContainer = document.getElementById('data-logs');
+        const phrases = [
+            "Neural buffer at 94%",
+            "Satellite link re-established",
+            "Encrypting outgoing packets",
+            "Thermal levels normalized",
+            "Background scan complete"
+        ];
+        setInterval(() => {
+            const p = document.createElement('p');
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            p.textContent = `[${time}] ${phrases[Math.floor(Math.random() * phrases.length)]}`;
+            p.className = Math.random() > 0.8 ? 'text-primary' : '';
+            logContainer.prepend(p);
+            if (logContainer.children.length > 15) logContainer.removeChild(logContainer.lastChild);
+        }, 4000);
+    </script>
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="hud-border p-6 w-[400px] flex flex-col gap-4 text-primary relative">
+        <button id="close-settings" class="absolute top-4 right-4 text-primary/60 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="widget-header">SYSTEM CONFIGURATION</div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-xs uppercase opacity-70">Ollama Status</span>
+            <span id="ollama-status" class="text-xs font-mono text-error">CHECKING...</span>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] uppercase opacity-60">AI Model</label>
+            <select id="model-select" class="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-primary focus:outline-none focus:border-primary">
+              <option value="llama3" class="bg-surface text-primary">llama3</option>
+              <option value="mistral" class="bg-surface text-primary">mistral</option>
+              <option value="phi3" class="bg-surface text-primary">phi3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="hud-border p-6 w-[400px] flex flex-col gap-4 text-primary relative">
+        <button id="close-help" class="absolute top-4 right-4 text-primary/60 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="widget-header">COMMAND HELP & HOTKEYS</div>
+        <div class="space-y-3 text-xs opacity-80">
+          <div class="flex justify-between">
+            <span class="font-bold">[ F1 ]</span>
+            <span>Show / Hide Help Menu</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="font-bold">[ F2 ]</span>
+            <span>Toggle Right Side Logs</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="font-bold">[ ESC ]</span>
+            <span>Clear Chat History</span>
+          </div>
+          <div class="border-t border-white/5 pt-2 mt-2">
+            <div class="font-semibold uppercase tracking-wider mb-1">Voice Activation</div>
+            <p class="text-[10px] opacity-60">Press the mic button or click the hotkey. Say commands like "open notepad" or ask questions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/chat.js' %}"></script>
+</body></html>
